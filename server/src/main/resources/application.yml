@@ -1,0 +1,10 @@
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true # 开启数据库下划线到实体类驼峰的自动映射
+  # 顺便把这几个好用的配置也带上，大一课设神器：
+  global-config:
+    db-config:
+      id-type: assign_id # 全局雪花算法ID (你表里都是bigint主键，这个完美契合)
+      logic-delete-field: deleted # 如果你以后加逻辑删除的话用到
+      logic-delete-value: 1
+      logic-not-delete-value: 0
