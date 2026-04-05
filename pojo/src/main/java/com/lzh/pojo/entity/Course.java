@@ -18,7 +18,6 @@ public class Course {
     /**
      * 主键ID
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

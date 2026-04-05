@@ -25,7 +25,6 @@ public class Student {
     /**
      * 主键ID
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

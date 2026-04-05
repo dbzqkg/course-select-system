@@ -22,7 +22,6 @@ public class StudentClassRecord {
     /**
      * 主键ID
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
