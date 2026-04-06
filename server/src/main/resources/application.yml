@@ -1,10 +1,20 @@
+server:
+  port: 8080 # 项目启动端口
+
+spring:
+  application:
+    name: course-select-server # 微服务应用名
+  
+  # 数据库配置
+  datasource:
+    # 注意：下面要把数据库名 course_select��账号 root、密码换成你本机的！
+    url: jdbc:mysql://localhost:3306/css
+    username: root
+    password: 516630 # 👈 改成你本地数据库的真实密码！
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# MyBatis-Plus 配置
 mybatis-plus:
   configuration:
-    map-underscore-to-camel-case: true # 开启数据库下划线到实体类驼峰的自动映射
-  # 顺便把这几个好用的配置也带上，大一课设神器：
-  global-config:
-    db-config:
-      id-type: assign_id # 全局雪花算法ID (你表里都是bigint主键，这个完美契合)
-      logic-delete-field: deleted # 如果你以后加逻辑删除的话用到
-      logic-delete-value: 1
-      logic-not-delete-value: 0
+    map-underscore-to-camel-case: true # 开启驼峰命名自动映射 (如 user_name -> userName)
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 在控制台打印执行的 SQL 语句（开发环境神器）

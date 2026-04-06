@@ -7,7 +7,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.10</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <packaging>pom</packaging>
@@ -15,96 +15,95 @@
     <artifactId>parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>parent</name>
-    <description>parent</description>
+
     <properties>
-        <!--默认属性-->
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--自定义属性-->
-        <lombok.version>1.18.30</lombok.version>
-        <spring-boot.starter.version>3.2.10</spring-boot.starter.version>
-        <aliyun.oss.version>3.18.4</aliyun.oss.version>
-        <javax.xml.bind.version>2.3.1</javax.xml.bind.version>
-        <javax.activation.version>1.1.1</javax.activation.version>
-        <glassfish.jaxb.version>2.3.3</glassfish.jaxb.version>
-        <jjwt.version>0.9.1</jjwt.version>
+
+        <!-- 全局版本控制中心 -->
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
+        <!-- 换成 0.11.5 -->
+        <jjwt.version>0.11.5</jjwt.version>
+        <!-- 本项目子模块版本号 -->
+        <project.version>0.0.1-SNAPSHOT</project.version>
+        <knife4j.version>4.3.0</knife4j.version>
+        <webmvc-ui.version>2.3.0</webmvc-ui.version>
     </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <!-- 关键在这里：强制使用 1.18.30 以上版本以支持 JDK 21 -->
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>${spring-boot.starter.version}</version>
-        </dependency>
-    </dependencies>
-    <!--不引入依赖，而是管理版本-->
-    <dependencyManagement>
-        <dependencies>
-<!--            &lt;!&ndash;阿里云依赖&ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>com.aliyun.oss</groupId>-->
-<!--                <artifactId>aliyun-sdk-oss</artifactId>-->
-<!--                <version>${aliyun.oss.version}</version>-->
-<!--            </dependency>-->
 
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- 核心：严格的依赖管理，只声明，不引入 -->
+    <dependencyManagement>
+
+        <dependencies>
+
+            <!-- 1. MyBatis-Plus Spring Boot 3 专属 Starter (给 server 用的) -->
             <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j</artifactId>
-                <version>4.5.0</version>
+                <groupId>com.baomidou</groupId>
+                <!-- 【注意看这里！加了 spring-boot3】 -->
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
+            <!-- 2. MyBatis-Plus Annotation (给 pojo 用的，极致轻量) -->
             <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${javax.xml.bind.version}</version>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-annotation</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
-            <dependency>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-                <version>${javax.activation.version}</version>
-            </dependency>
-            <!-- no more than 2.3.3-->
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>${glassfish.jaxb.version}</version>
-            </dependency>
-            <!--引入 JWT 依赖-->
+
+            <!-- 3. JWT 三剑客 (新版 jjwt 拆分成了 api 和 impl) -->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt</artifactId>
+                <artifactId>jjwt-api</artifactId>
                 <version>${jjwt.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.42</version>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- 4. 内部子模块依赖管理 (防止互相引用时版本错乱) -->
+            <dependency>
+                <groupId>com.lzh</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lzh</groupId>
+                <artifactId>pojo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Spring Boot 3 官方推荐的 OpenAPI 文档 (喂给 AI 的极品饲料) -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${webmvc-ui.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <!--要聚合的模块-->
+
     <modules>
         <module>../common</module>
         <module>../server</module>
         <module>../pojo</module>
     </modules>
-    <distributionManagement>
-        <!-- release版本的发布地址 -->
-        <repository>
-            <id>maven-releases</id>
-            <url>http://localhost:8081/repository/maven-releases/</url>
-        </repository>
-        <!-- snapshot版本的发布地址 -->
-        <snapshotRepository>
-            <id>maven-snapshots</id>
-            <url>http://localhost:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
 </project>

@@ -18,7 +18,71 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- 引入自身子模块 -->
+        <dependency>
+            <groupId>com.lzh</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lzh</groupId>
+            <artifactId>pojo</artifactId>
+        </dependency>
 
+        <!-- Web 环境 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 【重点修改1】改成 starter，这才是 Spring Boot 需要的！ -->
+        <!-- 1. MyBatis-Plus Spring Boot 3 专属 Starter (给 server 用的) -->
+        <!-- 【重点修改1】改成专属的 boot3-starter！ -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <!-- 【注意看这里！加了 spring-boot3】 -->
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
+
+        <!-- 【重点修改2】新版 JWT 必须是拆分的三个包，不要写版本号，父工程会管 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- MySQL 驱动 -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Redis先留着备用 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- Spring Boot 测试依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Spring Boot 3 官方推荐的 OpenAPI (Swagger) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

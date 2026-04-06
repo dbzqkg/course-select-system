@@ -8,23 +8,13 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
-    <groupId>com.lzh</groupId>
     <artifactId>pojo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>pojo</name>
-    <description>pojo</description>
 
-    <properties>
-        <java.version>17</java.version>
-    </properties>
     <dependencies>
+        <!-- 改成 annotation，极其轻量 -->
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus</artifactId>
-            <version>3.5.3.1</version>
+            <artifactId>mybatis-plus-annotation</artifactId>
         </dependency>
     </dependencies>
-
-
-
 </project>
