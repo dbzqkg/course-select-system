@@ -9,4 +9,6 @@ import org.springframework.stereotype.Service;
 
 public interface LoginService {
     StudentVO login(StudentDTO dto);
+
+    void register(Student student);
 }

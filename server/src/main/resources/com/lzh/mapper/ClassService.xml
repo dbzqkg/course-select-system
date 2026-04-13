@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzh.mapper.CourseClassMapper">
+
+    <select id="selectClassPage" resultType="com.lzh.pojo.vo.ClassVO">
+        SELECT
+        cc.id AS classId,
+        c.course_no AS courseNo,
+        c.name AS courseName,
+        c.base_credit AS credit,
+        c.type AS type,
+        t.name AS teacherName,
+        cc.time_location_info AS timeLocationInfo,
+        cc.capacity AS capacity,
+        cc.stock AS stock
+        FROM course_class cc
+        LEFT JOIN course c ON cc.course_id = c.id
+        LEFT JOIN teacher t ON cc.teacher_id = t.id
+        <!-- 动态条件拼装 -->
+        <where>
+            <!-- 按教学班主键精确定位 -->
+            <if test="dto.id != null">
+                AND cc.id = #{dto.id}
+            </if>
+            <!-- 课程编号精确查询 -->
+            <if test="dto.courseNo != null and dto.courseNo != ''">
+                AND c.course_no = #{dto.courseNo}
+            </if>
+            <!-- 课程名模糊查询 -->
+            <if test="dto.name != null and dto.name != ''">
+                AND c.name LIKE CONCAT('%', #{dto.name}, '%')
+            </if>
+            <!-- 课程大类 -->
+            <if test="dto.type != null">
+                AND c.type = #{dto.type}
+            </if>
+            <!-- 课程子类 (注意表字段名是不是 sub_type) -->
+            <if test="dto.subType != null">
+                AND c.sub_type = #{dto.subType}
+            </if>
+        </where>
+        ORDER BY cc.id DESC
+
+    </select>
+<!--    <select id="selectAllClassVO" resultType="com.lzh.pojo.vo.ClassVO">-->
+<!--        SELECT-->
+<!--        cc.id AS classId,-->
+<!--        c.course_no AS courseNo,-->
+<!--        c.name AS courseName,-->
+<!--        c.base_credit AS credit,-->
+<!--        c.type AS type,-->
+<!--        t.name AS teacherName,-->
+<!--        cc.time_location_info AS timeLocationInfo,-->
+<!--        cc.capacity AS capacity,-->
+<!--        cc.stock AS stock-->
+<!--        FROM course_class cc-->
+<!--        LEFT JOIN course c ON cc.course_id = c.id-->
+<!--        LEFT JOIN teacher t ON cc.teacher_id = t.id-->
+<!--    </select>-->
+    <select id="selectAllClassVO" resultType="com.lzh.pojo.vo.ClassVO">
+        SELECT
+            cc.id AS classId,
+            c.course_no AS courseNo,
+            c.name AS courseName,
+            cc.credit AS credit,  c.type AS type,
+            c.sub_type AS subType, t.name AS teacherName,
+            cc.time_location_info AS timeLocationInfo,
+            cc.capacity AS capacity,
+            cc.stock AS stock
+        FROM course_class cc
+        JOIN course c ON cc.course_id = c.id
+        JOIN teacher t ON cc.teacher_id = t.id </select>
+    <select id="selectClassVOByClassId" resultType="com.lzh.pojo.vo.ClassVO">
+        SELECT
+            cc.id AS classId,
+            c.course_no AS courseNo,
+            c.name AS courseName,
+            cc.credit AS credit,  c.type AS type,
+            c.sub_type AS subType, t.name AS teacherName,
+            cc.time_location_info AS timeLocationInfo,
+            cc.capacity AS capacity,
+            cc.stock AS stock
+        FROM course_class cc
+                 JOIN course c ON cc.course_id = c.id
+                 JOIN teacher t ON cc.teacher_id = t.id
+        where cc.id = #{classId}
+    </select>
+</mapper>

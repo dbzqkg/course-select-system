@@ -3,14 +3,25 @@ server:
 
 spring:
   application:
-    name: course-select-server # 微服务应用名
+    name: course-select-server
+  # 注意这里多了一层 data
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 516630  # 确保这个密码和你的 Redis 服务端一致
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 1
+          time-between-eviction-runs: 10s
   
   # 数据库配置
   datasource:
-    # 注意：下面要把数据库名 course_select��账号 root、密码换成你本机的！
     url: jdbc:mysql://localhost:3306/css
     username: root
-    password: 516630 # 👈 改成你本地数据库的真实密码！
+    password: 516630
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 # MyBatis-Plus 配置
@@ -18,3 +29,4 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true # 开启驼峰命名自动映射 (如 user_name -> userName)
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 在控制台打印执行的 SQL 语句（开发环境神器）
+

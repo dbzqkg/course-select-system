@@ -1,8 +1,6 @@
 package com.lzh.pojo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,22 +40,23 @@ public class Course {
     private Integer type;
 
     /**
-     * 创建人
+     * 学分分类
      */
-    private String createBy;
+    private Integer subType;
 
-    /**
-     * 更新人
-     */
-    private String updateBy;
-
-    /**
-     * 创建时间
-     */
+    // 插入时自动填充
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    /**
-     * 更新时间
-     */
+    // 插入和更新时都会自动填充
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
+
+    // 插入时自动填充
+    @TableField(fill = FieldFill.INSERT)
+    private String createBy;
+
+    // 插入和更新时自动填充
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private String updateBy;
 }

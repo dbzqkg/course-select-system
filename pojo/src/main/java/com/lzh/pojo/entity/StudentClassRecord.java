@@ -1,8 +1,6 @@
 package com.lzh.pojo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,23 +47,19 @@ public class StudentClassRecord {
      */
     private Integer status;
 
-    /**
-     * 创建人
-     */
-    private String createBy;
-
-    /**
-     * 更新人
-     */
-    private String updateBy;
-
-    /**
-     * 创建时间
-     */
+    // 插入时自动填充
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    /**
-     * 更新时间
-     */
+    // 插入和更新时都会自动填充
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
+
+    // 插入时自动填充
+    @TableField(fill = FieldFill.INSERT)
+    private String createBy;
+
+    // 插入和更新时自动填充
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private String updateBy;
 }

@@ -2,6 +2,7 @@ package com.lzh.controller.student;
 
 import com.lzh.common.result.Result;
 import com.lzh.common.util.JwtUtil;
+import com.lzh.common.util.SnowflakeIdUtil;
 import com.lzh.pojo.dto.StudentDTO;
 import com.lzh.pojo.entity.Student;
 import com.lzh.pojo.vo.StudentVO;
@@ -26,5 +27,14 @@ public class StudentLoginController {
         }else{
             return Result.error("登录失败，用户名或密码错误");
         }
+    }
+
+
+
+    @PostMapping("/register")
+    public Result<String> register(@RequestBody Student student) {
+        // Controller 只管接收成功的结果！如果有异常，根本走不到下一行！
+        loginService.register(student);
+        return  Result.success();
     }
 }

@@ -24,7 +24,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/student/login",    // 登录接口必须放行，不然怎么拿 Token？
                         "/swagger-ui/**",    // 放行 Swagger 网页的各种 HTML、JS 静态资源
                         "/v3/api-docs/**",   // 放行 Swagger 读取咱们接口信息的内部请求
-                        "/error"             // 放行 Spring Boot 默认的错误路径
+                        "/error",             // 放行 Spring Boot 默认的错误路径
+                        "/api/student/register"
                 );
     }
 }
