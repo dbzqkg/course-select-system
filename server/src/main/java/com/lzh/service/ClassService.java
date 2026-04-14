@@ -14,4 +14,6 @@ public interface ClassService {
 
     // 在 ClassServiceImpl.java 中实现
     void clearCache();
+
+    void book(Long id);
 }

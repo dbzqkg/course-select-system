@@ -196,4 +196,9 @@ public class ClassServiceImpl implements ClassService {
         stringRedisTemplate.delete(RedisConstants.CLASS_IDX_ALL);
         log.info("选课相关缓存已清空");
     }
+
+    @Override
+    public void book(Long id) {
+
+    }
 }

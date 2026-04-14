@@ -24,8 +24,13 @@ public class RedisConstants {
     public static final String STUDENT_INFO_KEY = "student:info:";
     /** 学生选课时间位图 (String/Bit: 1024bits/128bytes) */
     public static final String STUDENT_SCHEDULE_BIT = "student:schedule:";
-    /** 学生已选课程集合 (Set: 存储 classId，用于幂等校验) */
+    /** 学生已选课程集合 (ZSet: 存储 classId，用于幂等校验) */
     public static final String STUDENT_CLASSES_SET = "student:classes:";
+    /** 学生预选课程 */
+    public static final String STUDENT_CLASSES_WISH = "student:classes:book:";
+    /** 学生意向课程 */
+    public static final String STUDENT_CLASSES_INTENT = "student:classes:intent:";
+
 
     // ======================== 2. 课程/教学班相关 ========================
 
@@ -38,7 +43,11 @@ public class RedisConstants {
     /** 所有开放选课的教学班索引 (ZSet/Set: 用于分页或展示全部列表) */
     public static final String CLASS_IDX_ALL = "class:idx:all";
     /** 时间位图*/
-public static final String CLASS_SCHEDULE_BIT_MAP = "class:schedule:";
+    public static final String CLASS_SCHEDULE_BIT_MAP = "class:schedule:";
+    /** 学生选课意向 */
+    public static final String CLASS_STUDENT_INTENT = "class:students:intent:";
+
+
 
 
     // ======================== 3. 分布式锁/同步相关 ========================

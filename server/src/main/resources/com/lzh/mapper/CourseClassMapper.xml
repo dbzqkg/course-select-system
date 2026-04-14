@@ -20,7 +20,7 @@
         <!-- 动态条件拼装 -->
         <where>
             <!-- 按教学班主键精确定位 -->
-            <if test="dto.id != null">
+            <if test="dto.id!= null">
                 AND cc.id = #{dto.id}
             </if>
             <!-- 课程编号精确查询 -->
@@ -71,7 +71,7 @@
         FROM course_class cc
         JOIN course c ON cc.course_id = c.id
         JOIN teacher t ON cc.teacher_id = t.id </select>
-    <select id="selectClassVOByClassId" resultType="com.lzh.pojo.vo.ClassVO">
+    <select id="selectClassVOById" resultType="com.lzh.pojo.vo.ClassVO">
         SELECT
             cc.id AS classId,
             c.course_no AS courseNo,

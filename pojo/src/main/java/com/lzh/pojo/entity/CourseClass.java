@@ -79,4 +79,17 @@ public class CourseClass {
     // 插入和更新时自动填充
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateBy;
+
+    /** add*/
+    /**
+     * 实际已选人数 (中签或抢占成功的最终人数)
+     * 对应数据库 actual_count
+     */
+    private Integer actualCount;
+
+    /**
+     * 当前报了意向的总人数 (仅用于选修课展示热度，即有多少人选了这门课做志愿)
+     * 对应数据库 wish_count
+     */
+    private Integer wishCount;
 }

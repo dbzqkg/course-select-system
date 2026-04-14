@@ -29,5 +29,5 @@ public class ClassVO {
     private byte[] scheduleBitmap;
 
     // 5.前端展示
-    private Boolean conflicting;
+    private Boolean conflicting =  false;
 }

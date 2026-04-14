@@ -44,6 +44,10 @@ public class Student {
      * 专业
      */
     private String major;
+    /**
+     * 时间位图
+     */
+    private byte[] scheduleBitmap;
 
     // 插入时自动填充
     @TableField(fill = FieldFill.INSERT)

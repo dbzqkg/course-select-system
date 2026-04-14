@@ -7,6 +7,9 @@
 
 
     <select id="selectByStuId" resultType="com.lzh.pojo.entity.Student">
-        select id ,password ,stu_id,name from student where stu_id = #{stuId}
+        select id ,password ,stu_id,name ,schedule_bitmap from student where stu_id = #{stuId}
+    </select>
+    <select id="getScheduleBitmapById" parameterType="java.lang.Long">
+        select schedule_bitmap from student where id = #{id}
     </select>
 </mapper>

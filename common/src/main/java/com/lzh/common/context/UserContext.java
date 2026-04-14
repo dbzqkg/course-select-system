@@ -1,5 +1,7 @@
 package com.lzh.common.context;
 
+import lombok.Data;
+
 /**
  * 修改后的 UserContext
  * 包含身份信息和该次请求需要的“热数据”

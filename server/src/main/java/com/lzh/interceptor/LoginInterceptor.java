@@ -1,13 +1,16 @@
 package com.lzh.interceptor;
 
+import com.lzh.common.constants.RedisConstants;
 import com.lzh.common.context.UserContext;
 import com.lzh.common.util.JwtUtil;
 import com.lzh.common.util.ThreadLocalUtil;
+import com.lzh.mapper.LoginMapper;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -15,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import com.lzh.common.constants.RedisConstants.*;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static com.lzh.common.constants.RedisConstants.STUDENT_SCHEDULE_BIT;
@@ -26,6 +30,11 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate; // 依然可以用它，但拿位图要用 execute
+    private static final Random random = new Random();
+
+    @Autowired
+    @Lazy
+    private LoginMapper loginMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -56,13 +65,22 @@ public class LoginInterceptor implements HandlerInterceptor {
             // 使用 execute 绕过 StringRedisTemplate 的序列化器，直接拿原始字节
 
             byte[] scheduleBitmap = stringRedisTemplate.execute((RedisCallback<byte[]>) connection ->
-                    connection.get((STUDENT_SCHEDULE_BIT + stuId).getBytes())
+                    connection.get((STUDENT_SCHEDULE_BIT + id).getBytes())
             );
 
             // 如果 Redis 里暂时没有（比如预热漏了），可以根据业务决定是报错还是给个空位图
             if (scheduleBitmap == null) {
                 log.warn("学生 {} 的位图在 Redis 中缺失，请检查预热逻辑！", stuId);
-                scheduleBitmap = new byte[128]; // 兜底给一个全 0 位图（128字节=1024位）
+                scheduleBitmap = loginMapper.getScheduleBitmapById(id);
+                // 3. 【核心优化】立即回填 Redis，不要等 Token 刷新！
+                final byte[] finalBitmap = scheduleBitmap;
+                stringRedisTemplate.execute((RedisCallback<Object>) connection -> {
+                    // 过期时间直接对齐 JWT 的总长度
+                    connection.setEx((STUDENT_SCHEDULE_BIT + id).getBytes(),
+                            EXPIRATION_TIME / 1000,
+                            finalBitmap);
+                    return null;
+                });
             }
 
             // 封装完整的 UserContext (现在是 4 个参数了)
@@ -75,17 +93,24 @@ public class LoginInterceptor implements HandlerInterceptor {
             long currentTime = System.currentTimeMillis();
             long remainingTime = expirationTime - currentTime;
 
-            if (remainingTime < (EXPIRATION_TIME / 2)) {
+            if (remainingTime < (EXPIRATION_TIME / 2 + random.nextLong(1000 * 60 * 60))) {
                 String lockKey = "lock:refresh:" + stuId;
                 Boolean getLock = stringRedisTemplate.opsForValue()
                         .setIfAbsent(lockKey, "1", 10, TimeUnit.SECONDS);
 
                 if (Boolean.TRUE.equals(getLock)) {
-                    log.info("为学号: {} 签发新 Token", stuId);
                     String newToken = JwtUtil.createToken(id, stuId, name);
                     response.setHeader("New-Token", newToken);
                     response.setHeader("Access-Control-Expose-Headers", "New-Token");
                 }
+
+                final byte[] finalScheduleBitmap = scheduleBitmap;
+                stringRedisTemplate.execute((RedisCallback<Object>) connection -> {
+                    connection.setEx((RedisConstants.STUDENT_SCHEDULE_BIT + id).getBytes(),
+                            JwtUtil.EXPIRATION_TIME / 1000,
+                            finalScheduleBitmap);
+                    return null;
+                });
             }
 
             return true;
