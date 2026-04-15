@@ -1,55 +1,40 @@
 package com.lzh.pojo.entity;
 
+
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 学生实体类
- */
+* 预选表
+* @TableName student_booklist
+*/
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@TableName("student")
-public class Student {
+@TableName("student_booklist")
+public class StudentBooklist implements Serializable {
 
     /**
-     * 主键ID
-     */
+    * 
+    */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
-
     /**
-     * 学号
-     */
-    private String stuId;
+    * 
+    */
 
+    private Long studentId;
     /**
-     * 密码
-     */
-    private String password;
+    * 
+    */
 
-    /**
-     * 姓名
-     */
-    private String name;
-
-    /**
-     * 专业
-     */
-    private String major;
-    /**
-     * 时间位图
-     */
-    private byte[] scheduleBitmap;
-
+    private Long classId;
     // 插入时自动填充
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
@@ -65,4 +50,5 @@ public class Student {
     // 插入和更新时自动填充
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateBy;
+
 }

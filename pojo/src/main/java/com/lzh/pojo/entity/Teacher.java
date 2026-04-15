@@ -20,6 +20,7 @@ public class Teacher {
     /**
      * 主键ID
      */
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**

@@ -27,7 +27,7 @@ public class RedisConstants {
     /** 学生已选课程集合 (ZSet: 存储 classId，用于幂等校验) */
     public static final String STUDENT_CLASSES_SET = "student:classes:";
     /** 学生预选课程 */
-    public static final String STUDENT_CLASSES_WISH = "student:classes:book:";
+    public static final String STUDENT_CLASSES_BOOK = "student:classes:book:";
     /** 学生意向课程 */
     public static final String STUDENT_CLASSES_INTENT = "student:classes:intent:";
 

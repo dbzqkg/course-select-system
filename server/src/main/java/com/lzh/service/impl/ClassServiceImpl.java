@@ -4,21 +4,27 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.filter.SimplePropertyPreFilter;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lzh.common.constants.RedisConstants;
+import com.lzh.common.enums.AppResultCode;
+import com.lzh.common.exception.BusinessException;
 import com.lzh.common.result.PageResult;
 import com.lzh.common.util.BitMapUtils;
 import com.lzh.common.util.ThreadLocalUtil;
 import com.lzh.mapper.CourseClassMapper;
+import com.lzh.mapper.StudentBooklistMapper;
 import com.lzh.pojo.dto.ClassDTO;
+import com.lzh.pojo.entity.StudentBooklist;
 import com.lzh.pojo.vo.ClassVO;
 import com.lzh.service.ClassService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 
 import static com.lzh.common.constants.RedisConstants.CLASS_SCHEDULE_BIT_MAP;
 
@@ -31,6 +37,15 @@ public class ClassServiceImpl implements ClassService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private StudentBooklistMapper studentBooklistMapper;
+
+    @Autowired
+    @Qualifier("booklistExecutor")
+    private Executor booklistExecutor;
+
+
 
     /**
      * 分页查询：ZSet 索引分页 + Pipeline 批量获取 Hash 字段
@@ -197,8 +212,58 @@ public class ClassServiceImpl implements ClassService {
         log.info("选课相关缓存已清空");
     }
 
-    @Override
-    public void book(Long id) {
+//    @Override
+//    public void book(Long classId) {
+//        Long id = ThreadLocalUtil.get().id();
+//        log.info("{}预选课程{}",id,classId);
+//        // TODO 根据学生id和课程id查询是否已选 redis/mysql
+//
+//        // TODO 已选则返回错误
+//
+//        // TODO 未选则选择 （加锁和lua逻辑待考究）
+//
+//            // TODO 1.在redis预选表增加一条
+//
+//            // TODO 2.在阻塞队列加入一条回写mysql任务s
+//
+//    }
+@Override
+public void book(Long classId) {
+    // 1. 获取当前学生 ID
+    Long studentId = ThreadLocalUtil.get().id();
+    log.info("学生 {} 尝试预选课程 {}", studentId, classId);
 
+    // 定义 Redis Key (建议在 RedisConstants 中定义前缀)
+    String redisKey = "student:classes:book:" + studentId;
+
+    // 2. 利用 Redis Set 的 SADD 命令实现原子性的幂等校验
+    // SADD 返回 1 表示添加成功（之前不存在），返回 0 表示已存在
+    Long result = stringRedisTemplate.opsForSet().add(redisKey, classId.toString());
+
+    if (result == null || result == 0) {
+        // 如果 Redis 中已存在，说明已经预选过，直接返回成功或抛出业务异常
+        log.warn("学生 {} 重复预选课程 {}", studentId, classId);
+        return;
     }
+
+    // 3. 异步回写 MySQL 保证最终一致性
+    // 使用你定义的 booklistExecutor 线程池
+    booklistExecutor.execute(() -> {
+        try {
+            StudentBooklist booklist = new StudentBooklist();
+            booklist.setStudentId(studentId);
+            booklist.setClassId(classId);
+
+            // 执行插入
+            studentBooklistMapper.insert(booklist);
+            log.info("学生 {} 预选课程 {} 异步落库成功", studentId, classId);
+        } catch (Exception e) {
+            log.error("预选记录异步写入数据库失败，学生: {}, 课程: {}", studentId, classId, e);
+            // 补偿逻辑：如果数据库写入由于非重复原因失败，可以考虑把 Redis 里的缓存删掉，允许学生重试
+            stringRedisTemplate.opsForSet().remove(redisKey, classId.toString());
+            new BusinessException(AppResultCode.DB_WRITE_ERROR);
+        }
+    });
+}
+
 }

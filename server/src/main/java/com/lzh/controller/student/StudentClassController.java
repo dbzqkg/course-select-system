@@ -23,7 +23,7 @@ public class StudentClassController {
     }
 
     @PostMapping("/book/{id}")
-    @Operation(summary = "学生端-选课意向添加")
+    @Operation(summary = "学生端-预选课表单添加")
     public Result<String> book(@PathVariable Long id) {
         classService.book(id);
         return Result.success("选课意向已提交");

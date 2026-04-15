@@ -2,6 +2,7 @@ package com.lzh.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lzh.common.constants.RedisConstants;
+import com.lzh.common.enums.AppResultCode;
 import com.lzh.common.exception.BusinessException;
 import com.lzh.common.result.Result;
 import com.lzh.common.util.JwtUtil;
@@ -81,12 +82,12 @@ public StudentVO login(StudentDTO dto) {
     @Override
     public void register(Student student) {
         if (student == null || student.getStuId() == null || student.getPassword() == null) {
-            throw new BusinessException("数据不合法，学号或密码为空");
+            throw new BusinessException(AppResultCode.PARAM_ERROR);
         }
 
         Student existStu = loginMapper.selectByStuId(student.getStuId());
         if (existStu != null) {
-            throw new BusinessException("学号已被注册");
+            throw new BusinessException(AppResultCode.PARAM_ERROR);
         }
 
         student.setPassword(DigestUtils.md5DigestAsHex(student.getPassword().getBytes()));

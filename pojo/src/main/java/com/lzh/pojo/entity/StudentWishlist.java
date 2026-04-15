@@ -1,8 +1,6 @@
 package com.lzh.pojo.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +9,7 @@ import java.time.LocalDateTime;
 @TableName("student_wishlist")
 public class StudentWishlist {
     /** 主键ID */
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /** 学生逻辑ID */

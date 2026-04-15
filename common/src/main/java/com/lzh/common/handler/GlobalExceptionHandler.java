@@ -18,10 +18,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public Result<String> handleBusinessException(BusinessException ex) {
-        // 打印日志，方便后台排查（选课系统日志很重要）
         log.warn("触发业务异常: {}", ex.getMessage());
-        // 优雅地把异常信息包装进 Result，返回给前端
-        return Result.error(ex.getMessage());
+        // 这里调用我们下面改造后的 error 方法，传入自定义 code
+        return Result.error(ex.getCode(), ex.getMessage());
     }
 
     /**
@@ -33,4 +32,5 @@ public class GlobalExceptionHandler {
         log.error("系统未知异常: ", ex);
         return Result.error("服务器开小差了，请联系管理员");
     }
+
 }
